@@ -10,16 +10,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/articles")
 public class ArticleController {
     private final ArticleService articleService;
 
-    @GetMapping("/articles/job")
-    public ResponseEntity<?> getPopularArticlesByJob(@RequestParam Long jobId) {
-        return articleService.getPopularArticlesByJob(jobId);
+    @GetMapping("/job")
+    public ResponseEntity<?> getTopArticlesByJob(@RequestParam Long jobId) {
+        return articleService.getTopArticlesByJob(jobId);
     }
-    @GetMapping("/articles/keyword-img")
-    public ResponseEntity<?> getPopularArticlesByKeyword() {
-        return articleService.getPopularArticlesByKeyword();
+    @GetMapping("/keyword-img")
+    public ResponseEntity<?> getLatestKeywordImage() {
+        return articleService.getLatestKeywordImage();
+    }
+    @GetMapping("/popular")
+    public ResponseEntity<?> getTopArticles(@RequestParam String time) {
+        return articleService.getTopArticles(time);
     }
 }

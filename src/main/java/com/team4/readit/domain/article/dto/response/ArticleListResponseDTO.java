@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class JobArticleResponseDTO {
+public class ArticleListResponseDTO {
     private Long id;
     private String title;
     private String imgUrl;
