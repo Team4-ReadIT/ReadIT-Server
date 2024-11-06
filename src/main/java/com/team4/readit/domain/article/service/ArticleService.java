@@ -5,7 +5,8 @@ import com.team4.readit.domain.article.domain.Keyword;
 import com.team4.readit.domain.article.domain.repository.ArticleRepository;
 import com.team4.readit.domain.article.domain.repository.KeywordRepository;
 import com.team4.readit.domain.article.dto.response.ArticleListResponseDTO;
-import com.team4.readit.global.exception.ErrorCode;
+import com.team4.readit.global.exception.ExceptionCode;
+import com.team4.readit.global.exception.InvalidInputException;
 import com.team4.readit.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,12 +72,10 @@ public class ArticleService {
             case "month" ->
                 // 지난 1달 동안
                     startDate = startDate.minusMonths(1);  // 한 달 전
-            default -> {
-                return ResponseEntity.badRequest().body(ApiResponse.failure(ErrorCode.INVALID_PERIOD, "지원되지 않는 기간입니다."));
-            }
+            default -> throw new InvalidInputException(ExceptionCode.INVALID_PERIOD);
         }
 
-        log.info("조회 기간 시작일: {}, 종료일: {}", startDate);
+        log.info("조회 기간 시작일: {}", startDate);
 
         // 해당 기간에 맞는 인기 기사 조회 (조회수 및 스크랩 수 기준으로 상위 5개)
         Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Order.desc("viewCount"), Sort.Order.desc("scrapCount")));
