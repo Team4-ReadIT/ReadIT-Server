@@ -26,4 +26,9 @@ public class ArticleController {
     public ResponseEntity<?> getTopArticles(@RequestParam String time) {
         return articleService.getTopArticles(time);
     }
+
+    @GetMapping
+    public ResponseEntity<?> getAllArticles() {
+        return articleService.getAllArticles();
+    }
 }

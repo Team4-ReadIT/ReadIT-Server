@@ -96,4 +96,20 @@ public class ArticleService {
 
         return ResponseEntity.ok(ApiResponse.success(articleDTOs, "인기 기사 조회 성공"));
     }
+
+    public ResponseEntity<?> getAllArticles() {
+        List<Article> articles = articleRepository.findAll();
+
+        // Article -> PopularArticleResponseDTO로 변환
+        List<ArticleListResponseDTO> articleDTOs = articles.stream()
+                .map(article -> new ArticleListResponseDTO(
+                        article.getId(),
+                        article.getTitle(),
+                        article.getImgUrl(),
+                        article.getSource()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(ApiResponse.success(articleDTOs, "모든 기사 조회 성공"));
+    }
 }
