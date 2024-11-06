@@ -4,6 +4,7 @@ import com.team4.readit.domain.article.domain.Article;
 import com.team4.readit.domain.article.domain.repository.ArticleRepository;
 import com.team4.readit.domain.scrap.domain.Scrap;
 import com.team4.readit.domain.scrap.domain.repository.ScrapRepository;
+import com.team4.readit.domain.scrap.dto.response.ScrapedArticleResponse;
 import com.team4.readit.domain.user_info.domain.UserInfo;
 import com.team4.readit.domain.user_info.domain.repository.UserInfoRepository;
 import com.team4.readit.global.exception.ExceptionCode;
@@ -14,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -57,5 +60,22 @@ public class ScrapService {
                 return ResponseEntity.ok(ApiResponse.success(false, "스크랩이 취소되었습니다."));
             }
         }
+    }
+
+    public ResponseEntity<?> getMyScraps(Long userId) {
+        UserInfo userInfo = userInfoRepository.findById(userId)
+                .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_USER));
+
+        // 사용자 스크랩 목록을 가져오고, 필요한 데이터만 반환하는 DTO로 변환
+        List<ScrapedArticleResponse> scraps = userInfo.getScraps().stream()
+                .map(scrap -> new ScrapedArticleResponse(
+                        scrap.getId(),
+                        scrap.getArticle().getTitle(),
+                        scrap.getArticle().getImgUrl(),
+                        scrap.getArticle().getSource()
+                ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(ApiResponse.success(scraps, "스크랩 목록 조회 성공"));
     }
 }

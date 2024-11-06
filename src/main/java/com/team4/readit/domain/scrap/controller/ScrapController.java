@@ -16,4 +16,9 @@ public class ScrapController {
     public ResponseEntity<?> toggleScrap(@RequestParam Long userId, @PathVariable Long articleId) {
         return scrapService.toggleScrap(userId, articleId);
     }
+
+    @GetMapping
+    public ResponseEntity<?> getMyScraps(@RequestParam Long userId) {
+        return scrapService.getMyScraps(userId);
+    }
 }
