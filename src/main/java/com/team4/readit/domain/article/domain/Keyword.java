@@ -1,4 +1,4 @@
-package com.team4.readit.domain.keyword.domain;
+package com.team4.readit.domain.article.domain;
 
 import com.team4.readit.global.BaseEntity;
 import jakarta.persistence.*;

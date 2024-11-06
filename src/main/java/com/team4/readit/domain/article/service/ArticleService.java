@@ -1,7 +1,9 @@
 package com.team4.readit.domain.article.service;
 
 import com.team4.readit.domain.article.domain.Article;
+import com.team4.readit.domain.article.domain.Keyword;
 import com.team4.readit.domain.article.domain.repository.ArticleRepository;
+import com.team4.readit.domain.article.domain.repository.KeywordRepository;
 import com.team4.readit.domain.article.dto.response.JobArticleResponseDTO;
 import com.team4.readit.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleRepository articleRepository;
+    private final KeywordRepository keywordRepository;
 
     public ResponseEntity<?> getPopularArticlesByJob(Long jobId) {
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1)
@@ -43,5 +46,13 @@ public class ArticleService {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(ApiResponse.success(articleDTOs, "사용자 직무의 인기 기사 조회 성공"));
+    }
+
+    public ResponseEntity<?> getPopularArticlesByKeyword() {
+        String latestKeywordImgUrl = keywordRepository.findTopByOrderByCreatedAtDesc()
+                .map(Keyword::getImgUrl)
+                .orElse("");
+        log.info("Latest Keyword ImgUrl: {}", latestKeywordImgUrl);
+        return ResponseEntity.ok(ApiResponse.success(latestKeywordImgUrl, "최신 키워드 이미지 URL 조회 성공"));
     }
 }

@@ -18,4 +18,8 @@ public class ArticleController {
     public ResponseEntity<?> getPopularArticlesByJob(@RequestParam Long jobId) {
         return articleService.getPopularArticlesByJob(jobId);
     }
+    @GetMapping("/articles/keyword-img")
+    public ResponseEntity<?> getPopularArticlesByKeyword() {
+        return articleService.getPopularArticlesByKeyword();
+    }
 }

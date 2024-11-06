@@ -18,3 +18,8 @@ INSERT INTO article_view (job_id, article_id, created_at, updated_at, status) VA
                                                                                   (5, 3, '2024-11-06 16:30:00', '2024-11-10 16:30:00', 'ACTIVE'),
                                                                                   (6, 1, '2024-11-05 16:30:00', '2024-11-10 16:30:00', 'ACTIVE'),
                                                                                   (6, 2, '2024-11-04 16:30:00', '2024-11-10 16:30:00', 'ACTIVE'),
+
+insert into keyword (img_url, created_at, updated_at, status) values
+                                                                 ("img url입니다.",now(), now(), 'ACTIVE');
+insert into keyword (img_url, created_at, updated_at, status) values
+    ("img url입니다2",now(), now(), 'ACTIVE');
