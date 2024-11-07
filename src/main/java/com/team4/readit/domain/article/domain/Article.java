@@ -53,5 +53,9 @@ public class Article extends BaseEntity {
     public void decrementScrapCount() {
         this.scrapCount--;
     }
+
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
 }
 
