@@ -2,6 +2,8 @@ package com.team4.readit.domain.mindmap.service;
 
 import com.team4.readit.domain.mindmap.domain.Mindmap;
 import com.team4.readit.domain.mindmap.domain.repository.MindmapRepository;
+import com.team4.readit.domain.mindmap.dto.response.MindmapDto;
+import com.team4.readit.global.converter.MindmapDtoConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +19,7 @@ import java.util.Optional;
 public class MindmapService {
     private final MindmapRepository mindmapRepository;
 
-    public Map<String, Object> getMindmapHierarchy(Long userId, Long articleId) {
+    public MindmapDto getMindmapHierarchy(Long userId, Long articleId) {
         List<Mindmap> mindmaps = mindmapRepository.findByUserIdAndArticleId(userId, articleId);
 
         // 마인드맵이 존재하면 계층 구조를 반환
@@ -29,7 +31,7 @@ public class MindmapService {
                 }
             }
         }
-        return result;
+        return MindmapDtoConverter.convertToMindmapDto(result);
     }
 
     // 마인드맵의 계층 구조를 재귀적으로 구축

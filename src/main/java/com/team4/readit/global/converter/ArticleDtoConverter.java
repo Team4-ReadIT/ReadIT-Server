@@ -6,6 +6,7 @@ import com.team4.readit.domain.highlight.dto.response.HighlightDto;
 import com.team4.readit.domain.mindmap.dto.response.MindmapDto;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 public class ArticleDtoConverter {
@@ -38,9 +39,7 @@ public class ArticleDtoConverter {
     }
 
     // Article, Mindmap, Highlight -> ArticleDetailResponseDto 변환 메서드
-    public static ArticleDetailResponseDto convertToArticleDetailResponseDto(Article article, Map<String, Object> mindmapHierarchy, HighlightDto highlightDto) {
-        ArticleDto articleDto = ArticleDtoConverter.convertToArticleDto(article);
-        MindmapDto mindmapDto = MindmapDtoConverter.convertToMindmapDto(mindmapHierarchy);
+    public static ArticleDetailResponseDto convertToArticleDetailResponseDto(ArticleDto articleDto, MindmapDto mindmapDto, List<HighlightDto> highlightDto) {
         return new ArticleDetailResponseDto(articleDto, mindmapDto, highlightDto);
     }
 }

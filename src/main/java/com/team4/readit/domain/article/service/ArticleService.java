@@ -5,6 +5,8 @@ import com.team4.readit.domain.article.domain.Keyword;
 import com.team4.readit.domain.article.domain.repository.ArticleRepository;
 import com.team4.readit.domain.article.domain.repository.KeywordRepository;
 import com.team4.readit.domain.highlight.dto.response.HighlightDto;
+import com.team4.readit.domain.highlight.service.HighlightService;
+import com.team4.readit.domain.mindmap.dto.response.MindmapDto;
 import com.team4.readit.global.converter.ArticleDtoConverter;
 import com.team4.readit.domain.article.dto.response.*;
 import com.team4.readit.domain.article_view.domain.repository.ArticleViewRepository;
@@ -37,11 +39,10 @@ import java.util.Map;
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final KeywordRepository keywordRepository;
-    private final ArticleViewRepository articleViewRepository;
-    private final JobRepository jobRepository;
     private final UserInfoUtil userInfoUtil;
     private final MindmapService mindmapService;
     private final ArticleViewService articleViewService;
+    private final HighlightService highlightService;
 
     public ResponseEntity<?> getTopArticlesByJob(Long userId) {
         // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
@@ -131,17 +132,15 @@ public class ArticleService {
         // 사용자가 직무를 변경할 수 있으므로 조회수를 조회하는 기준에 job_id도 포함시켜야 함
         articleViewService.increaseViewCount(userInfo, job, article);
 
+        ArticleDto articleDto = ArticleDtoConverter.convertToArticleDto(article);
+
         // 마인드맵 계층 구조 조회
-        Map<String, Object> mindmapHierarchy = mindmapService.getMindmapHierarchy(userId, articleId);
+        MindmapDto mindmapDto = mindmapService.getMindmapHierarchy(userId, articleId);
 
-        // TODO 5. 형광펜 및 메모 내역 반환
-        HighlightDto highlightDto = new HighlightDto("highlight");
+        // 하이라이트된 문장 조회
+        List<HighlightDto> highlightDtos = highlightService.getHighlightsByArticleAndUser(articleId, userId);
 
-        ArticleDetailResponseDto responseDto = ArticleDtoConverter.convertToArticleDetailResponseDto(
-                article,
-                mindmapHierarchy,
-                highlightDto
-        );
+        ArticleDetailResponseDto responseDto = ArticleDtoConverter.convertToArticleDetailResponseDto(articleDto, mindmapDto, highlightDtos);
 
         return ResponseEntity.ok(ApiResponse.success(responseDto, "기사 상세 조회 성공"));
     }

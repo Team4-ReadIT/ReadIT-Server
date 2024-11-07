@@ -1,3 +1,3 @@
 package com.team4.readit.domain.highlight.dto.response;
 
-public record HighlightDto(String memoText) {}
+public record HighlightDto(int startIndex, int endIndex, String memoText) {}
