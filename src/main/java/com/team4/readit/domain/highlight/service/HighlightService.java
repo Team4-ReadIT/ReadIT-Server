@@ -2,11 +2,10 @@ package com.team4.readit.domain.highlight.service;
 
 import com.team4.readit.domain.article.domain.Article;
 import com.team4.readit.domain.article.service.ArticleHelperService;
-import com.team4.readit.domain.article.service.ArticleService;
 import com.team4.readit.domain.highlight.domain.Highlight;
 import com.team4.readit.domain.highlight.domain.repository.HighlightRepository;
 import com.team4.readit.domain.highlight.dto.HighlightDto;
-import com.team4.readit.domain.highlight.dto.request.HighlightSaveRequestDto;
+import com.team4.readit.domain.highlight.dto.request.HighlightsSaveRequestDto;
 import com.team4.readit.domain.user_info.domain.UserInfo;
 import com.team4.readit.domain.user_info.service.UserInfoUtil;
 import com.team4.readit.global.converter.HighlightDtoConverter;
@@ -36,12 +35,12 @@ public class HighlightService {
     }
 
     @Transactional
-    public ResponseEntity<?> saveHighlight(HighlightSaveRequestDto requestDto, Long userId) {
+    public ResponseEntity<?> saveHighlight(HighlightsSaveRequestDto requestDto, Long userId) {
         UserInfo user = userInfoUtil.getUserInfoById(userId);
         Article article = articleHelperService.getArticleById(requestDto.recordId());
 
         // 하이라이트 저장 (변환 로직을 Converter에 위임)
-        List<Highlight> highlights = HighlightDtoConverter.toEntities(requestDto.highlights(), requestDto.recordId(), user, article);
+        List<Highlight> highlights = HighlightDtoConverter.toEntities(requestDto.highlights(), user, article);
         highlightRepository.saveAll(highlights);
 
         return ResponseEntity.ok(ApiResponse.success(null, "하이라이트 저장 성공"));
