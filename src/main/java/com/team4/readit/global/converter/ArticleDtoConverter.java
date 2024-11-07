@@ -22,7 +22,7 @@ public class ArticleDtoConverter {
     }
 
     // Article -> ArticleDto 변환 메서드
-    public static ArticleDto convertToArticleDto(Article article) {
+    public static ArticleDto convertToArticleDto(Article article, Boolean isScrapped) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         String formattedPubDate = article.getPubDate().format(formatter);
 
@@ -34,7 +34,8 @@ public class ArticleDtoConverter {
                 article.getSummary(),
                 article.getArticleLink(),
                 article.getViewCount(),
-                article.getImgUrl()
+                article.getImgUrl(),
+                isScrapped
         );
     }
 

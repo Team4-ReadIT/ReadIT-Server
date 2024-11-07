@@ -81,4 +81,8 @@ public class ScrapService {
 
         return ResponseEntity.ok(ApiResponse.success(scraps, "스크랩 목록 조회 성공"));
     }
+
+    public boolean isArticleScappedByUser(Long userId, Long articleId) {
+        return scrapRepository.existsByUserIdAndArticleId(userId, articleId);
+    }
 }

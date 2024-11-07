@@ -7,6 +7,7 @@ import com.team4.readit.domain.article.domain.repository.KeywordRepository;
 import com.team4.readit.domain.highlight.dto.response.HighlightDto;
 import com.team4.readit.domain.highlight.service.HighlightService;
 import com.team4.readit.domain.mindmap.dto.response.MindmapDto;
+import com.team4.readit.domain.scrap.service.ScrapService;
 import com.team4.readit.global.converter.ArticleDtoConverter;
 import com.team4.readit.domain.article.dto.response.*;
 import com.team4.readit.domain.article_view.domain.repository.ArticleViewRepository;
@@ -43,6 +44,7 @@ public class ArticleService {
     private final MindmapService mindmapService;
     private final ArticleViewService articleViewService;
     private final HighlightService highlightService;
+    private final ScrapService scrapService;
 
     public ResponseEntity<?> getTopArticlesByJob(Long userId) {
         // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
@@ -132,7 +134,10 @@ public class ArticleService {
         // 사용자가 직무를 변경할 수 있으므로 조회수를 조회하는 기준에 job_id도 포함시켜야 함
         articleViewService.increaseViewCount(userInfo, job, article);
 
-        ArticleDto articleDto = ArticleDtoConverter.convertToArticleDto(article);
+        // 사용자 스크랩 여부 조회
+        boolean isScrapped = scrapService.isArticleScappedByUser(userId, articleId);
+
+        ArticleDto articleDto = ArticleDtoConverter.convertToArticleDto(article, isScrapped);
 
         // 마인드맵 계층 구조 조회
         MindmapDto mindmapDto = mindmapService.getMindmapHierarchy(userId, articleId);

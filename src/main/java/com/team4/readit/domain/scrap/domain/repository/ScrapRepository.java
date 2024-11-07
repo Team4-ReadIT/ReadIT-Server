@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     Optional<Scrap> findByArticleIdAndUserId(Long articleId, Long userId);
+
+    boolean existsByUserIdAndArticleId(Long userId, Long articleId);
 }
