@@ -4,7 +4,19 @@ import com.team4.readit.domain.article.domain.Article;
 import com.team4.readit.domain.article.domain.Keyword;
 import com.team4.readit.domain.article.domain.repository.ArticleRepository;
 import com.team4.readit.domain.article.domain.repository.KeywordRepository;
-import com.team4.readit.domain.article.dto.response.ArticleListResponseDTO;
+import com.team4.readit.domain.highlight.dto.response.HighlightDto;
+import com.team4.readit.domain.highlight.service.HighlightService;
+import com.team4.readit.domain.mindmap.dto.response.MindmapDto;
+import com.team4.readit.domain.scrap.service.ScrapService;
+import com.team4.readit.global.converter.ArticleDtoConverter;
+import com.team4.readit.domain.article.dto.response.*;
+import com.team4.readit.domain.article_view.domain.repository.ArticleViewRepository;
+import com.team4.readit.domain.article_view.service.ArticleViewService;
+import com.team4.readit.domain.job.domain.Job;
+import com.team4.readit.domain.job.domain.repository.JobRepository;
+import com.team4.readit.domain.mindmap.service.MindmapService;
+import com.team4.readit.domain.user_info.domain.UserInfo;
+import com.team4.readit.domain.user_info.service.UserInfoUtil;
 import com.team4.readit.global.exception.ExceptionCode;
 import com.team4.readit.global.exception.InvalidInputException;
 import com.team4.readit.global.response.ApiResponse;
@@ -19,6 +31,7 @@ import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -27,8 +40,22 @@ import java.util.List;
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final KeywordRepository keywordRepository;
+    private final UserInfoUtil userInfoUtil;
+    private final MindmapService mindmapService;
+    private final ArticleViewService articleViewService;
+    private final HighlightService highlightService;
+    private final ScrapService scrapService;
 
-    public ResponseEntity<?> getTopArticlesByJob(Long jobId) {
+    public ResponseEntity<?> getTopArticlesByJob(Long userId) {
+        // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
+        UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
+
+        if (userInfo.getJob() == null) {
+            return ResponseEntity.ok(ApiResponse.success(null, "직무 정보가 없습니다."));
+        }
+
+        Long jobId = userInfo.getJob().getId();
+
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1)
                 .withHour(0)
                 .withMinute(0)
@@ -39,14 +66,8 @@ public class ArticleService {
 
         List<Article> articles = articleRepository.findTop5PopularArticlesByJobId(jobId, oneWeekAgo);
 
-        // Article -> PopularArticleResponseDTO로 변환
         List<ArticleListResponseDTO> articleDTOs = articles.stream()
-                .map(article -> new ArticleListResponseDTO(
-                        article.getId(),
-                        article.getTitle(),
-                        article.getImgUrl(),
-                        article.getSource()
-                ))
+                .map(ArticleDtoConverter::convertToArticleListResponseDTO)
                 .toList();
 
         return ResponseEntity.ok(ApiResponse.success(articleDTOs, "사용자 직무의 인기 기사 조회 성공"));
@@ -81,19 +102,51 @@ public class ArticleService {
         Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Order.desc("viewCount"), Sort.Order.desc("scrapCount")));
         List<Article> topArticles = articleRepository.findTopArticlesByTimePeriod(startDate, pageable);
 
-
-        // Article -> PopularArticleResponseDTO로 변환
         List<ArticleListResponseDTO> articleDTOs = topArticles.stream()
-                .map(article -> new ArticleListResponseDTO(
-                        article.getId(),
-                        article.getTitle(),
-                        article.getImgUrl(),
-                        article.getSource()
-                ))
+                .map(ArticleDtoConverter::convertToArticleListResponseDTO)
                 .toList();
 
         log.info("인기 기사 조회 성공 (기간: {}, 기사 수: {})", time, topArticles.size());
 
         return ResponseEntity.ok(ApiResponse.success(articleDTOs, "인기 기사 조회 성공"));
+    }
+
+    public ResponseEntity<?> getAllArticles() {
+        List<Article> articles = articleRepository.findAll();
+
+        List<ArticleListResponseDTO> articleDTOs = articles.stream()
+                .map(ArticleDtoConverter::convertToArticleListResponseDTO)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponse.success(articleDTOs, "모든 기사 조회 성공"));
+    }
+
+    @Transactional
+    public ResponseEntity<?> getArticleById(Long articleId, Long userId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_ARTICLE));
+
+        // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
+        UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
+        Job job = userInfo.getJob();
+
+        // 사용자가 현재 직무에서 이전에 조회한 적이 없다면 조회수 증가
+        // 사용자가 직무를 변경할 수 있으므로 조회수를 조회하는 기준에 job_id도 포함시켜야 함
+        articleViewService.increaseViewCount(userInfo, job, article);
+
+        // 사용자 스크랩 여부 조회
+        boolean isScrapped = scrapService.isArticleScappedByUser(userId, articleId);
+
+        ArticleDto articleDto = ArticleDtoConverter.convertToArticleDto(article, isScrapped);
+
+        // 마인드맵 계층 구조 조회
+        MindmapDto mindmapDto = mindmapService.getMindmapHierarchy(userId, articleId);
+
+        // 하이라이트된 문장 조회
+        List<HighlightDto> highlightDtos = highlightService.getHighlightsByArticleAndUser(articleId, userId);
+
+        ArticleDetailResponseDto responseDto = ArticleDtoConverter.convertToArticleDetailResponseDto(articleDto, mindmapDto, highlightDtos);
+
+        return ResponseEntity.ok(ApiResponse.success(responseDto, "기사 상세 조회 성공"));
     }
 }

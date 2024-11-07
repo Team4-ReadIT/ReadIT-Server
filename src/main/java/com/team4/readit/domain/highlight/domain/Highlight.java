@@ -35,4 +35,10 @@ public class Highlight extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String memoText;
+
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int startIndex;
+
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int endIndex;
 }
