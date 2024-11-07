@@ -125,13 +125,10 @@ public class ArticleService {
 
         ArticleDto articleDto = ArticleDtoConverter.convertToArticleDto(article, isScrapped);
 
-        // 마인드맵 계층 구조 조회
-        MindmapDto mindmapDto = mindmapService.getMindmapHierarchy(userId, articleId);
-
         // 하이라이트된 문장 조회
         List<HighlightDto> highlightDtos = highlightService.getHighlightsByArticleAndUser(articleId, userId);
 
-        ArticleDetailResponseDto responseDto = ArticleDtoConverter.convertToArticleDetailResponseDto(articleDto, mindmapDto, highlightDtos);
+        ArticleDetailResponseDto responseDto = ArticleDtoConverter.convertToArticleDetailResponseDto(articleDto, highlightDtos);
 
         return ResponseEntity.ok(ApiResponse.success(responseDto, "기사 상세 조회 성공"));
     }

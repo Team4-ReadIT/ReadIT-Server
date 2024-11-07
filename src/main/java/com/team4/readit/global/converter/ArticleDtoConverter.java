@@ -40,7 +40,7 @@ public class ArticleDtoConverter {
     }
 
     // Article, Mindmap, Highlight -> ArticleDetailResponseDto 변환 메서드
-    public static ArticleDetailResponseDto convertToArticleDetailResponseDto(ArticleDto articleDto, MindmapDto mindmapDto, List<HighlightDto> highlightDto) {
-        return new ArticleDetailResponseDto(articleDto, mindmapDto, highlightDto);
+    public static ArticleDetailResponseDto convertToArticleDetailResponseDto(ArticleDto articleDto, List<HighlightDto> highlightDto) {
+        return new ArticleDetailResponseDto(articleDto, highlightDto);
     }
 }
