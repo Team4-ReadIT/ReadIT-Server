@@ -1,6 +1,6 @@
 package com.team4.readit.domain.mindmap.controller;
 
-
+import com.team4.readit.domain.mindmap.dto.request.SaveMindmapRequestDto;
 import com.team4.readit.domain.mindmap.service.MindmapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,5 +15,9 @@ public class MindmapController {
     @GetMapping("/{articleId}")
     private ResponseEntity<?> getMindmap(@RequestParam Long userId, @PathVariable Long articleId) {
         return mindmapService.buildMindmapHierarchy(userId, articleId);
+    }
+    @PostMapping
+    public ResponseEntity<?> saveMindmap(@RequestBody SaveMindmapRequestDto requestDto, @RequestParam Long userId) {
+        return mindmapService.saveMindmap(requestDto, userId);
     }
 }
