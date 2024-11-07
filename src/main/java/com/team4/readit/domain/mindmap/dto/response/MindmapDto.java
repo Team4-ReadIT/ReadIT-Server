@@ -1,4 +1,4 @@
-package com.team4.readit.domain.article.dto.response;
+package com.team4.readit.domain.mindmap.dto.response;
 
 import java.util.Map;
 
