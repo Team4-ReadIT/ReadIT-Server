@@ -2,6 +2,7 @@ package com.team4.readit.domain.scrap.service;
 
 import com.team4.readit.domain.article.domain.Article;
 import com.team4.readit.domain.article.domain.repository.ArticleRepository;
+import com.team4.readit.domain.article.service.ArticleService;
 import com.team4.readit.domain.scrap.domain.Scrap;
 import com.team4.readit.domain.scrap.domain.repository.ScrapRepository;
 import com.team4.readit.domain.scrap.dto.response.ScrapedArticleResponse;
@@ -25,8 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ScrapService {
     private final ScrapRepository scrapRepository;
-    private final UserInfoRepository userInfoRepository;
-    private final ArticleRepository articleRepository;
+    private final ArticleService articleService;
     private final UserInfoUtil userInfoUtil;
 
     @Transactional
@@ -34,8 +34,7 @@ public class ScrapService {
         // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
         UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
 
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_ARTICLE));
+        Article article = articleService.getArticleById(articleId);
 
         Scrap existingScrap = scrapRepository.findByArticleIdAndUserId(articleId, userId)
                 .orElse(null); // Optional을 null로 대체

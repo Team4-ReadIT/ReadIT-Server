@@ -1,7 +1,6 @@
 package com.team4.readit.domain.article.service;
 
 import com.team4.readit.domain.article.domain.Article;
-import com.team4.readit.domain.article.domain.Keyword;
 import com.team4.readit.domain.article.domain.repository.ArticleRepository;
 import com.team4.readit.domain.article.domain.repository.KeywordRepository;
 import com.team4.readit.domain.highlight.dto.response.HighlightDto;
@@ -10,10 +9,8 @@ import com.team4.readit.domain.mindmap.dto.response.MindmapDto;
 import com.team4.readit.domain.scrap.service.ScrapService;
 import com.team4.readit.global.converter.ArticleDtoConverter;
 import com.team4.readit.domain.article.dto.response.*;
-import com.team4.readit.domain.article_view.domain.repository.ArticleViewRepository;
 import com.team4.readit.domain.article_view.service.ArticleViewService;
 import com.team4.readit.domain.job.domain.Job;
-import com.team4.readit.domain.job.domain.repository.JobRepository;
 import com.team4.readit.domain.mindmap.service.MindmapService;
 import com.team4.readit.domain.user_info.domain.UserInfo;
 import com.team4.readit.domain.user_info.service.UserInfoUtil;
@@ -31,7 +28,6 @@ import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -39,7 +35,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleRepository articleRepository;
-    private final KeywordRepository keywordRepository;
     private final UserInfoUtil userInfoUtil;
     private final MindmapService mindmapService;
     private final ArticleViewService articleViewService;
@@ -71,14 +66,6 @@ public class ArticleService {
                 .toList();
 
         return ResponseEntity.ok(ApiResponse.success(articleDTOs, "사용자 직무의 인기 기사 조회 성공"));
-    }
-
-    public ResponseEntity<?> getLatestKeywordImage() {
-        String latestKeywordImgUrl = keywordRepository.findTopByOrderByCreatedAtDesc()
-                .map(Keyword::getImgUrl)
-                .orElse("");
-        log.info("Latest Keyword ImgUrl: {}", latestKeywordImgUrl);
-        return ResponseEntity.ok(ApiResponse.success(latestKeywordImgUrl, "최신 키워드 이미지 URL 조회 성공"));
     }
 
     public ResponseEntity<?> getTopArticles(String time) {
@@ -123,8 +110,7 @@ public class ArticleService {
 
     @Transactional
     public ResponseEntity<?> getArticleById(Long articleId, Long userId) {
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_ARTICLE));
+        Article article = getArticleById(articleId);
 
         // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
         UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
@@ -148,5 +134,10 @@ public class ArticleService {
         ArticleDetailResponseDto responseDto = ArticleDtoConverter.convertToArticleDetailResponseDto(articleDto, mindmapDto, highlightDtos);
 
         return ResponseEntity.ok(ApiResponse.success(responseDto, "기사 상세 조회 성공"));
+    }
+
+    public Article getArticleById(Long articleId) {
+        return articleRepository.findById(articleId)
+                        .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_ARTICLE));
     }
 }

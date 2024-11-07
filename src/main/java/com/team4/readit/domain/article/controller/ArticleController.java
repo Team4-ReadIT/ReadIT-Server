@@ -15,10 +15,6 @@ public class ArticleController {
     public ResponseEntity<?> getTopArticlesByJob(@RequestParam Long userId) {
         return articleService.getTopArticlesByJob(userId);
     }
-    @GetMapping("/keyword-img")
-    public ResponseEntity<?> getLatestKeywordImage() {
-        return articleService.getLatestKeywordImage();
-    }
     @GetMapping("/popular")
     public ResponseEntity<?> getTopArticles(@RequestParam String time) {
         return articleService.getTopArticles(time);
