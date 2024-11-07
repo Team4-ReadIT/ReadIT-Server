@@ -3,11 +3,9 @@ package com.team4.readit.global.converter;
 import com.team4.readit.domain.article.domain.Article;
 import com.team4.readit.domain.article.dto.response.*;
 import com.team4.readit.domain.highlight.dto.response.HighlightDto;
-import com.team4.readit.domain.mindmap.dto.response.MindmapDto;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 public class ArticleDtoConverter {
 
@@ -40,7 +38,7 @@ public class ArticleDtoConverter {
     }
 
     // Article, Mindmap, Highlight -> ArticleDetailResponseDto 변환 메서드
-    public static ArticleDetailResponseDto convertToArticleDetailResponseDto(ArticleDto articleDto, MindmapDto mindmapDto, List<HighlightDto> highlightDto) {
-        return new ArticleDetailResponseDto(articleDto, mindmapDto, highlightDto);
+    public static ArticleDetailResponseDto convertToArticleDetailResponseDto(ArticleDto articleDto, List<HighlightDto> highlightDto) {
+        return new ArticleDetailResponseDto(articleDto, highlightDto);
     }
 }
