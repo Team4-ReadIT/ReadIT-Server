@@ -2,7 +2,7 @@ package com.team4.readit.global.converter;
 
 import com.team4.readit.domain.article.domain.Article;
 import com.team4.readit.domain.article.dto.response.*;
-import com.team4.readit.domain.highlight.dto.response.HighlightDto;
+import com.team4.readit.domain.highlight.dto.HighlightDto;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
