@@ -2,7 +2,7 @@ package com.team4.readit.domain.article.service;
 
 import com.team4.readit.domain.article.domain.Article;
 import com.team4.readit.domain.article.domain.repository.ArticleRepository;
-import com.team4.readit.domain.highlight.dto.response.HighlightDto;
+import com.team4.readit.domain.highlight.dto.HighlightDto;
 import com.team4.readit.domain.highlight.service.HighlightService;
 import com.team4.readit.domain.scrap.service.ScrapHelperService;
 import com.team4.readit.global.converter.ArticleDtoConverter;
