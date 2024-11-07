@@ -2,16 +2,13 @@ package com.team4.readit.domain.article.service;
 
 import com.team4.readit.domain.article.domain.Article;
 import com.team4.readit.domain.article.domain.repository.ArticleRepository;
-import com.team4.readit.domain.article.domain.repository.KeywordRepository;
 import com.team4.readit.domain.highlight.dto.response.HighlightDto;
 import com.team4.readit.domain.highlight.service.HighlightService;
-import com.team4.readit.domain.mindmap.dto.response.MindmapDto;
-import com.team4.readit.domain.scrap.service.ScrapService;
+import com.team4.readit.domain.scrap.service.ScrapHelperService;
 import com.team4.readit.global.converter.ArticleDtoConverter;
 import com.team4.readit.domain.article.dto.response.*;
 import com.team4.readit.domain.article_view.service.ArticleViewService;
 import com.team4.readit.domain.job.domain.Job;
-import com.team4.readit.domain.mindmap.service.MindmapService;
 import com.team4.readit.domain.user_info.domain.UserInfo;
 import com.team4.readit.domain.user_info.service.UserInfoUtil;
 import com.team4.readit.global.exception.ExceptionCode;
@@ -36,11 +33,10 @@ import java.util.List;
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final UserInfoUtil userInfoUtil;
-    private final MindmapService mindmapService;
     private final ArticleViewService articleViewService;
     private final HighlightService highlightService;
-    private final ScrapService scrapService;
-
+    private final ScrapHelperService scrapHelperService;
+    private final ArticleHelperService articleHelperService;
     public ResponseEntity<?> getTopArticlesByJob(Long userId) {
         // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
         UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
@@ -109,8 +105,8 @@ public class ArticleService {
     }
 
     @Transactional
-    public ResponseEntity<?> getArticleById(Long articleId, Long userId) {
-        Article article = getArticleById(articleId);
+    public ResponseEntity<?> getArticleDetail(Long articleId, Long userId) {
+        Article article = articleHelperService.getArticleById(articleId);
 
         // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
         UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
@@ -121,7 +117,7 @@ public class ArticleService {
         articleViewService.increaseViewCount(userInfo, job, article);
 
         // 사용자 스크랩 여부 조회
-        boolean isScrapped = scrapService.isArticleScappedByUser(userId, articleId);
+        boolean isScrapped = scrapHelperService.isScraped(userId, articleId);
 
         ArticleDto articleDto = ArticleDtoConverter.convertToArticleDto(article, isScrapped);
 
@@ -131,10 +127,5 @@ public class ArticleService {
         ArticleDetailResponseDto responseDto = ArticleDtoConverter.convertToArticleDetailResponseDto(articleDto, highlightDtos);
 
         return ResponseEntity.ok(ApiResponse.success(responseDto, "기사 상세 조회 성공"));
-    }
-
-    public Article getArticleById(Long articleId) {
-        return articleRepository.findById(articleId)
-                        .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_ARTICLE));
     }
 }
