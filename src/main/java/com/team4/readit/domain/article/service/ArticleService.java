@@ -16,6 +16,8 @@ import com.team4.readit.domain.mindmap.domain.repository.MindmapRepository;
 import com.team4.readit.domain.mindmap.service.MindmapService;
 import com.team4.readit.domain.user_info.domain.UserInfo;
 import com.team4.readit.domain.user_info.domain.repository.UserInfoRepository;
+import com.team4.readit.domain.user_info.service.UserInfoService;
+import com.team4.readit.domain.user_info.service.UserInfoUtil;
 import com.team4.readit.global.exception.ExceptionCode;
 import com.team4.readit.global.exception.InvalidInputException;
 import com.team4.readit.global.response.ApiResponse;
@@ -43,11 +45,19 @@ public class ArticleService {
     private final KeywordRepository keywordRepository;
     private final ArticleViewRepository articleViewRepository;
     private final JobRepository jobRepository;
-    private final UserInfoRepository userInfoRepository;
+    private final UserInfoUtil userInfoUtil;
     private final MindmapService mindmapService;
 
-    public ResponseEntity<?> getTopArticlesByJob(Long jobId) {
-        // TODO 로그인 토큰 -> 유저 -> 직무 정보 가져오기 (현재는 jobId로 받음)
+    public ResponseEntity<?> getTopArticlesByJob(Long userId) {
+        // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
+        UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
+
+        if (userInfo.getJob() == null) {
+            return ResponseEntity.ok(ApiResponse.success(null, "직무 정보가 없습니다."));
+        }
+
+        Long jobId = userInfo.getJob().getId();
+
         // TODO 직무 정보 없는 경우에는 data에 null 넣은 뒤 성공 리턴(200) or 실패 리턴(400) or 다른 방법으로 처리
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1)
                 .withHour(0)
@@ -140,9 +150,8 @@ public class ArticleService {
                 .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_ARTICLE));
 
         // 2. 조회수 증가 (ArticleView 조회 및 없으면 생성)
-        // TODO 로그인 토큰 -> 유저 추출 로 변경
-        UserInfo userInfo = userInfoRepository.findById(userId)
-                .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_USER));
+        // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
+        UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
 
         Long job_id = userInfo.getJob().getId();
         Job job = jobRepository.findById(job_id)

@@ -12,8 +12,8 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping("/job")
-    public ResponseEntity<?> getTopArticlesByJob(@RequestParam Long jobId) {
-        return articleService.getTopArticlesByJob(jobId);
+    public ResponseEntity<?> getTopArticlesByJob(@RequestParam Long userId) {
+        return articleService.getTopArticlesByJob(userId);
     }
     @GetMapping("/keyword-img")
     public ResponseEntity<?> getLatestKeywordImage() {

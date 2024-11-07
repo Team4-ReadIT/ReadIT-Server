@@ -7,6 +7,7 @@ import com.team4.readit.domain.scrap.domain.repository.ScrapRepository;
 import com.team4.readit.domain.scrap.dto.response.ScrapedArticleResponse;
 import com.team4.readit.domain.user_info.domain.UserInfo;
 import com.team4.readit.domain.user_info.domain.repository.UserInfoRepository;
+import com.team4.readit.domain.user_info.service.UserInfoUtil;
 import com.team4.readit.global.exception.ExceptionCode;
 import com.team4.readit.global.exception.InvalidInputException;
 import com.team4.readit.global.response.ApiResponse;
@@ -26,11 +27,13 @@ public class ScrapService {
     private final ScrapRepository scrapRepository;
     private final UserInfoRepository userInfoRepository;
     private final ArticleRepository articleRepository;
+    private final UserInfoUtil userInfoUtil;
 
     @Transactional
     public ResponseEntity<?> toggleScrap(Long userId, Long articleId) {
-        UserInfo userInfo = userInfoRepository.findById(userId)
-                .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_USER));
+        // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
+        UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
+
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_ARTICLE));
 
@@ -63,8 +66,8 @@ public class ScrapService {
     }
 
     public ResponseEntity<?> getMyScraps(Long userId) {
-        UserInfo userInfo = userInfoRepository.findById(userId)
-                .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_USER));
+        // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
+        UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
 
         // 사용자 스크랩 목록을 가져오고, 필요한 데이터만 반환하는 DTO로 변환
         List<ScrapedArticleResponse> scraps = userInfo.getScraps().stream()
