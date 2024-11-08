@@ -51,7 +51,4 @@ public class UserInfo extends BaseEntity {
         this.password = password;
     }
 
-    public boolean matchPassword(String password) {
-        return this.password.equals(password);
-    }
 }

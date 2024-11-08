@@ -1,5 +1,11 @@
 package com.team4.readit.domain.user_info.service;
 
+import com.team4.readit.global.config.jwt.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.team4.readit.domain.job.domain.Job;
 import com.team4.readit.domain.job.domain.repository.JobRepository;
 import com.team4.readit.domain.user_info.domain.UserInfo;
@@ -7,21 +13,18 @@ import com.team4.readit.domain.user_info.domain.repository.UserInfoRepository;
 import com.team4.readit.domain.user_info.dto.AuthDto;
 import com.team4.readit.global.exception.BadRequestException;
 import com.team4.readit.global.exception.ExceptionCode;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import com.team4.readit.global.exception.InvalidInputException;
-import com.team4.readit.global.exception.ExceptionCode;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
     private final UserInfoRepository userInfoRepository;
     private final JobRepository jobRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public Long signup(AuthDto.SignUpRequest request) {
-        // Check if email already exists
         if (userInfoRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException(ExceptionCode.EMAIL_ALREADY_EXISTS);
         }
@@ -31,7 +34,7 @@ public class AuthService {
 
         UserInfo userInfo = UserInfo.builder()
                 .email(request.getEmail())
-                .password(request.getPassword())  // In real application, password should be encoded
+                .password(passwordEncoder.encode(request.getPassword()))  // 비밀번호 암호화
                 .name(request.getName())
                 .job(job)
                 .build();
@@ -40,19 +43,23 @@ public class AuthService {
         return savedUser.getId();
     }
 
-    public AuthDto.UserInfoResponse login(AuthDto.LoginRequest request) {
+    public AuthDto.LoginResponse login(AuthDto.LoginRequest request) {
         UserInfo userInfo = userInfoRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadRequestException(ExceptionCode.LOGIN_FAILED));
 
-        if (!userInfo.matchPassword(request.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), userInfo.getPassword())) {
             throw new BadRequestException(ExceptionCode.LOGIN_FAILED);
         }
 
-        return new AuthDto.UserInfoResponse(
+        String token = jwtTokenProvider.createToken(userInfo.getEmail());
+
+        AuthDto.UserInfoResponse userInfoResponse = new AuthDto.UserInfoResponse(
                 userInfo.getId(),
                 userInfo.getName(),
                 userInfo.getEmail(),
                 userInfo.getJob().getJobName()
         );
+
+        return new AuthDto.LoginResponse(token, userInfoResponse);
     }
 }
