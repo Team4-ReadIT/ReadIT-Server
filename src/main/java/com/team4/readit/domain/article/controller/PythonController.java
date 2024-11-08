@@ -1,34 +1,55 @@
 package com.team4.readit.domain.article.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.team4.readit.domain.article.domain.Article;
+import com.team4.readit.domain.article.service.ArticleHelperService;
+import com.team4.readit.global.response.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
+import static com.team4.readit.global.converter.ArticleDtoConverter.convertJsonToDtoList;
 
 @RestController
+@RequiredArgsConstructor
 public class PythonController {
 
-    @GetMapping("/api/model/execute-python")
-    public void executePythonScript(@RequestParam String arg1, @RequestParam String arg2) {
+    private final ArticleHelperService articleHelperService;
+
+    @GetMapping("/api/v1/articles/{articleId}/similar")
+    public ResponseEntity<?> executePythonScript(@PathVariable Long articleId) {
         try {
-            String pythonScriptPath = "src/scripts/model.py";
-            ProcessBuilder processBuilder = new ProcessBuilder("python", pythonScriptPath, "arg1", "agr2");
+            Article article = articleHelperService.getArticleById(articleId);
+            String pythonScriptPath = "src/scripts/clustering.py";
+            System.out.println("Received input articleId: " + articleId);
+
+            ProcessBuilder processBuilder = new ProcessBuilder("python", pythonScriptPath, articleId.toString());
+            processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
 
-            InputStream inputStream = process.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            // 인코딩을 명시적으로 설정하여 출력 읽기
+            InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
 
+            StringBuilder output = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                // 실행 결과 처리
-                System.out.println(line);
+                output.append(line);
             }
+
+            // Python 스크립트가 반환한 JSON 데이터를 SimilarDto 리스트로 변환
+            String outputStr = output.toString();
+            System.out.println("Python script output: " + outputStr);
+
+            // convertJsonToDtoList 메서드 호출
+            return ResponseEntity.ok(ApiResponse.success(convertJsonToDtoList(outputStr), "유사한 기사 조회 성공"));
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error executing Python script", e);
         }
     }
 }

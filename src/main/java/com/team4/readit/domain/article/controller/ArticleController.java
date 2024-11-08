@@ -1,8 +1,6 @@
 package com.team4.readit.domain.article.controller;
 
 import com.team4.readit.domain.article.service.ArticleService;
-import com.team4.readit.domain.user_info.domain.UserInfo;
-import com.team4.readit.domain.user_info.service.UserInfoUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

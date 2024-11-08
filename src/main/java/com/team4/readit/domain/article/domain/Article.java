@@ -31,10 +31,10 @@ public class Article extends BaseEntity {
     @Column(length = 50)
     private String source;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String summary;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String articleLink;
 
     @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
@@ -46,7 +46,7 @@ public class Article extends BaseEntity {
     @Column(length = 255)
     private String imgUrl;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String original;
 
     public void incrementScrapCount() {
