@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/highlight")
+@RequestMapping("/api/v1/highlights")
 public class HighlightController {
     private final HighlightService highlightService;
 
