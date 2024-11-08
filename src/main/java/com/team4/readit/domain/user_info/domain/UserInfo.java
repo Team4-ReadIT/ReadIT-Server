@@ -5,6 +5,7 @@ import com.team4.readit.domain.scrap.domain.Scrap;
 import com.team4.readit.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -41,6 +42,16 @@ public class UserInfo extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Scrap> scraps;
+
+    @Builder
+    public UserInfo(Job job, String name, String email, String password) {
+        this.job = job;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public boolean matchPassword(String password) {
+        return this.password.equals(password);
+    }
 }
-
-
