@@ -46,6 +46,9 @@ public class Article extends BaseEntity {
     @Column(length = 255)
     private String imgUrl;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String original;
+
     public void incrementScrapCount() {
         this.scrapCount++;
     }
