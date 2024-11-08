@@ -52,4 +52,16 @@ public class AuthDto {
             this.jobName = jobName;
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    public static class LoginResponse {
+        private String token;
+        private UserInfoResponse userInfo;
+
+        public LoginResponse(String token, UserInfoResponse userInfo) {
+            this.token = token;
+            this.userInfo = userInfo;
+        }
+    }
 }

@@ -23,8 +23,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<AuthDto.UserInfoResponse> login(@Valid @RequestBody AuthDto.LoginRequest request) {
-        AuthDto.UserInfoResponse response = authService.login(request);
+    public ApiResponse<AuthDto.LoginResponse> login(@Valid @RequestBody AuthDto.LoginRequest request) {
+        AuthDto.LoginResponse response = authService.login(request);
         return ApiResponse.success(response, "로그인이 완료되었습니다.");
     }
 }
