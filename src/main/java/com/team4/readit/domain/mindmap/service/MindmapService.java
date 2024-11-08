@@ -27,7 +27,9 @@ public class MindmapService {
     private final UserInfoUtil userInfoUtil;
     private final ArticleHelperService articleHelperService;
 
-    public ResponseEntity<?> buildMindmapHierarchy(Long userId, Long articleId) {
+    public ResponseEntity<?> buildMindmapHierarchy(String email, Long articleId) {
+        UserInfo userInfo = userInfoUtil.getUserInfoByEmail(email);
+        Long userId = userInfo.getId();
         List<Mindmap> mindmaps = mindmapRepository.findByUserIdAndArticleId(userId, articleId);
 
         // 마인드맵이 존재하면 계층 구조를 반환
@@ -45,8 +47,8 @@ public class MindmapService {
     }
 
     @Transactional
-    public ResponseEntity<?> saveMindmap(SaveMindmapRequestDto requestDto, Long userId) {
-        UserInfo user = userInfoUtil.getUserInfoById(userId);
+    public ResponseEntity<?> saveMindmap(String email, SaveMindmapRequestDto requestDto) {
+        UserInfo user = userInfoUtil.getUserInfoByEmail(email);
         Article article = articleHelperService.getArticleById(requestDto.articleId());
 
         // 최상위 노드들에 대해 계층 구조 저장 시작

@@ -35,8 +35,8 @@ public class HighlightService {
     }
 
     @Transactional
-    public ResponseEntity<?> saveHighlight(HighlightsSaveRequestDto requestDto, Long userId) {
-        UserInfo user = userInfoUtil.getUserInfoById(userId);
+    public ResponseEntity<?> saveHighlight(String email, HighlightsSaveRequestDto requestDto) {
+        UserInfo user = userInfoUtil.getUserInfoByEmail(email);
         Article article = articleHelperService.getArticleById(requestDto.recordId());
 
         // 하이라이트 저장 (변환 로직을 Converter에 위임)

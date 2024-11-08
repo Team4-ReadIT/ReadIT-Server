@@ -5,6 +5,7 @@ import com.team4.readit.domain.highlight.service.HighlightService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -14,7 +15,7 @@ public class HighlightController {
     private final HighlightService highlightService;
 
     @PostMapping
-    public ResponseEntity<?> saveHighlight(@RequestBody @Valid HighlightsSaveRequestDto highlightsSaveRequestDto, @RequestParam("userId") Long userId) {
-        return highlightService.saveHighlight(highlightsSaveRequestDto, userId);
+    public ResponseEntity<?> saveHighlight(Authentication authentication, @RequestBody @Valid HighlightsSaveRequestDto highlightsSaveRequestDto) {
+        return highlightService.saveHighlight(authentication.getName(), highlightsSaveRequestDto);
     }
 }

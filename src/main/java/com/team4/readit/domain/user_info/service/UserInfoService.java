@@ -14,7 +14,6 @@ import com.team4.readit.global.exception.ExceptionCode;
 @RequiredArgsConstructor
 public class UserInfoService {
     private final UserInfoRepository userInfoRepository;
-    private final UserInfoUtil userInfoUtil;
 
     public AuthDto.UserInfoResponse getUserInfo(String email) {
         UserInfo userInfo = userInfoRepository.findByEmail(email)

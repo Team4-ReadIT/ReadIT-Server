@@ -31,9 +31,9 @@ public class ScrapService {
     private final UserInfoUtil userInfoUtil;
 
     @Transactional
-    public ResponseEntity<?> toggleScrap(Long userId, Long articleId) {
-        // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
-        UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
+    public ResponseEntity<?> toggleScrap(String email, Long articleId) {
+        UserInfo userInfo = userInfoUtil.getUserInfoByEmail(email);
+        Long userId = userInfo.getId();
 
         Article article = articleHelperService.getArticleById(articleId);
 
@@ -65,9 +65,8 @@ public class ScrapService {
         }
     }
 
-    public ResponseEntity<?> getMyScraps(Long userId) {
-        // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
-        UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
+    public ResponseEntity<?> getMyScraps(String email) {
+        UserInfo userInfo = userInfoUtil.getUserInfoByEmail(email);
 
         // 사용자 스크랩 목록을 가져오고, 필요한 데이터만 반환하는 DTO로 변환
         List<ScrapedArticleResponse> scraps = userInfo.getScraps().stream()

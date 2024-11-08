@@ -15,9 +15,8 @@ public class UserInfoUtil {
 
     private final UserInfoRepository userInfoRepository;
 
-    // TODO userId 대신 email로 유저 정보 가져오는 것으로 변경
-    public UserInfo getUserInfoById(Long userId) {
-        return userInfoRepository.findById(userId)
+    public UserInfo getUserInfoByEmail(String email) {
+        return userInfoRepository.findByEmail(email)
                 .orElseThrow(() -> new InvalidInputException(ExceptionCode.INVALID_USER));
     }
 }

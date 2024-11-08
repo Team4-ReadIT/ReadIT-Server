@@ -37,9 +37,9 @@ public class ArticleService {
     private final HighlightService highlightService;
     private final ScrapHelperService scrapHelperService;
     private final ArticleHelperService articleHelperService;
-    public ResponseEntity<?> getTopArticlesByJob(Long userId) {
-        // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
-        UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
+    public ResponseEntity<?> getTopArticlesByJob(String email) {
+
+        UserInfo userInfo = userInfoUtil.getUserInfoByEmail(email);
 
         if (userInfo.getJob() == null) {
             return ResponseEntity.ok(ApiResponse.success(null, "직무 정보가 없습니다."));
@@ -105,11 +105,10 @@ public class ArticleService {
     }
 
     @Transactional
-    public ResponseEntity<?> getArticleDetail(Long articleId, Long userId) {
+    public ResponseEntity<?> getArticleDetail(String email, Long articleId) {
         Article article = articleHelperService.getArticleById(articleId);
-
-        // TODO 로그인 토큰에서 이메일 추출하여 유저 정보 가져오기
-        UserInfo userInfo = userInfoUtil.getUserInfoById(userId);
+        UserInfo userInfo = userInfoUtil.getUserInfoByEmail(email);
+        Long userId = userInfo.getId();
         Job job = userInfo.getJob();
 
         // 사용자가 현재 직무에서 이전에 조회한 적이 없다면 조회수 증가
