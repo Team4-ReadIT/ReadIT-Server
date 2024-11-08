@@ -1,5 +1,6 @@
 package com.team4.readit.domain.article.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team4.readit.domain.article.domain.Article;
 import com.team4.readit.domain.article.domain.repository.ArticleRepository;
 import com.team4.readit.domain.highlight.dto.HighlightDto;
@@ -22,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import com.fasterxml.jackson.core.type.TypeReference;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -126,5 +129,24 @@ public class ArticleService {
         ArticleDetailResponseDto responseDto = ArticleDtoConverter.convertToArticleDetailResponseDto(articleDto, highlightDtos);
 
         return ResponseEntity.ok(ApiResponse.success(responseDto, "기사 상세 조회 성공"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<SimilarDto> convertJsonToDtoList(String outputStr) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<SimilarDto> similarDtos = objectMapper.readValue(outputStr, new TypeReference<List<SimilarDto>>() {});
+
+            // id로 Article을 조회하고 imgurl과 source 설정
+            similarDtos.forEach(similarDto -> {
+                Article article = articleHelperService.getArticleById(similarDto.getId());
+                similarDto.setImgUrl(article.getImgUrl());
+                similarDto.setSource(article.getSource());
+            });
+
+            return similarDtos;
+        } catch (IOException e) {
+            throw new RuntimeException("Error parsing JSON to List<SimilarDto>", e);
+        }
     }
 }

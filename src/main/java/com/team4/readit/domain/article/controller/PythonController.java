@@ -2,6 +2,7 @@ package com.team4.readit.domain.article.controller;
 
 import com.team4.readit.domain.article.domain.Article;
 import com.team4.readit.domain.article.service.ArticleHelperService;
+import com.team4.readit.domain.article.service.ArticleService;
 import com.team4.readit.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +13,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-import static com.team4.readit.global.converter.ArticleDtoConverter.convertJsonToDtoList;
 
 @RestController
 @RequiredArgsConstructor
 public class PythonController {
 
     private final ArticleHelperService articleHelperService;
+    private final ArticleService articleService;
 
     @GetMapping("/api/v1/articles/{articleId}/similar")
     public ResponseEntity<?> executePythonScript(@PathVariable Long articleId) {
@@ -46,7 +47,7 @@ public class PythonController {
             System.out.println("Python script output: " + outputStr);
 
             // convertJsonToDtoList 메서드 호출
-            return ResponseEntity.ok(ApiResponse.success(convertJsonToDtoList(outputStr), "유사한 기사 조회 성공"));
+            return ResponseEntity.ok(ApiResponse.success(articleService.convertJsonToDtoList(outputStr), "유사한 기사 조회 성공"));
 
         } catch (IOException e) {
             throw new RuntimeException("Error executing Python script", e);

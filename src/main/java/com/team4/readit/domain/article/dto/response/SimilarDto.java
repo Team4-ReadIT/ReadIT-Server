@@ -12,4 +12,6 @@ import lombok.Setter;
 public class SimilarDto {
     private Long id;
     private String title;
+    private String imgUrl;
+    private String source;
 }
