@@ -28,7 +28,7 @@ public class PythonController {
             String pythonScriptPath = "src/scripts/clustering.py";
             System.out.println("Received input articleId: " + articleId);
 
-            ProcessBuilder processBuilder = new ProcessBuilder("python", pythonScriptPath, articleId.toString());
+            ProcessBuilder processBuilder = new ProcessBuilder("python3", pythonScriptPath, articleId.toString());
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
 
