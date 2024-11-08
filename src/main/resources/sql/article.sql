@@ -19,7 +19,25 @@ INSERT INTO article_view (job_id, article_id, created_at, updated_at, status) VA
                                                                                   (6, 1, '2024-11-05 16:30:00', '2024-11-10 16:30:00', 'ACTIVE'),
                                                                                   (6, 2, '2024-11-04 16:30:00', '2024-11-10 16:30:00', 'ACTIVE'),
 
+-- Keyword 데이터 삽입
 insert into keyword (img_url, created_at, updated_at, status) values
                                                                  ("img url입니다.",now(), now(), 'ACTIVE');
 insert into keyword (img_url, created_at, updated_at, status) values
     ("img url입니다2",now(), now(), 'ACTIVE');
+
+INSERT INTO highlight (article_id, user_id, memo_text, start_index, end_index, status, created_at, updated_at)
+VALUES (1, 1, '메모메모.', 0, 10, 'ACTIVE', NOW(), NOW());
+
+INSERT INTO highlight (article_id, user_id, memo_text, start_index, end_index, status, created_at, updated_at)
+VALUES (1, 1, '알아야 하는 워딩', 14, 17, 'ACTIVE', NOW(), NOW());
+
+INSERT INTO highlight (article_id, user_id, memo_text, start_index, end_index, status, created_at, updated_at)
+VALUES (1, 2, null, 20, 35, 'ACTIVE', NOW(), NOW());
+
+INSERT INTO mindmap (article_id, user_id, content, parent_id, status, created_at, updated_at)
+VALUES
+    (1, 1, '상위1', NULL, 'ACTIVE', '2024-11-07 10:30:00', '2024-11-07 10:30:00'),
+    (1, 1, '중위1', 1, 'ACTIVE', '2024-11-07 10:30:00', '2024-11-07 10:30:00'),
+    (1, 1, '하위1', 2, 'ACTIVE', '2024-11-07 10:30:00', '2024-11-07 10:30:00'),
+    (1, 1, '하위2', 2, 'ACTIVE', '2024-11-07 10:30:00', '2024-11-07 10:30:00'),
+    (1, 1, '중위2', 1, 'ACTIVE', '2024-11-07 10:30:00', '2024-11-07 10:30:00');
