@@ -2,6 +2,8 @@
 
 > [ReadIT 프로젝트 설명 바로 가기](https://github.com/Team4-ReadIT)
 
+</br> 
+
 ## 👥 𝗠𝗲𝗺𝗯𝗲𝗿𝘀 𝗮𝗻𝗱 𝗥𝗼𝗹𝗲𝘀
 
 | 이름        | 역할               | 담당 파트           |
