@@ -8,8 +8,8 @@
 
 | 이름        | 역할               | 담당 파트           |
 |-------------|--------------------|---------------------|
-| [노경희](https://github.com/khee2) | Frontend            | 기사 추천, 마인드맵, 형광펜 및 메모  |
-| [이채영](https://github.com/alwaysY0ung) | Frontend            | 로그인, 회원가입  |
+| [노경희](https://github.com/khee2) | Backend            | 기사 추천, 마인드맵, 형광펜 및 메모  |
+| [이채영](https://github.com/alwaysY0ung) | Backend            | 로그인, 회원가입  |
 
 </br>
 
